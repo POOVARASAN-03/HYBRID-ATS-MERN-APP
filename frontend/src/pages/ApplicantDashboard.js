@@ -51,6 +51,37 @@ const ApplicantDashboard = () => {
 
   return (
     <div className="space-y-6">
+        {/* Quick Stats */}
+      {applications.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">{applications.length}</div>
+              <div className="text-sm text-gray-600">Total Applications</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-yellow-600">
+                {applications.filter(app => app.status === 'Applied').length}
+              </div>
+              <div className="text-sm text-gray-600">Applied</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-purple-600">
+                {applications.filter(app => app.status === 'Interview').length}
+              </div>
+              <div className="text-sm text-gray-600">Interviews</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">
+                {applications.filter(app => app.status === 'Offer').length}
+              </div>
+              <div className="text-sm text-gray-600">Offers</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">My Applications</h1>
         <Link
@@ -128,36 +159,7 @@ const ApplicantDashboard = () => {
         </div>
       )}
 
-      {/* Quick Stats */}
-      {applications.length > 0 && (
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{applications.length}</div>
-              <div className="text-sm text-gray-600">Total Applications</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600">
-                {applications.filter(app => app.status === 'Applied').length}
-              </div>
-              <div className="text-sm text-gray-600">Applied</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">
-                {applications.filter(app => app.status === 'Interview').length}
-              </div>
-              <div className="text-sm text-gray-600">Interviews</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {applications.filter(app => app.status === 'Offer').length}
-              </div>
-              <div className="text-sm text-gray-600">Offers</div>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 };
