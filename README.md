@@ -43,17 +43,7 @@ git clone <repository-url>
 cd interview-tracker
 ```
 
-2. Start the application:
-```bash
-docker-compose up -d
-```
-
-3. Seed the database:
-```bash
-docker exec -it interview-tracker-backend npm run seed
-```
-
-4. Access the application:
+2. Access the application:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:5000
 
