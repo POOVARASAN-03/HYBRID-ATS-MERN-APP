@@ -21,6 +21,14 @@ const register = async (req, res) => {
 
     const { name, email, password, role = 'applicant' } = req.body;
 
+    // Enforce that only applicants can register through this endpoint
+    if (role !== 'applicant') {
+      return res.status(403).json({
+        success: false,
+        message: 'Only applicant accounts can be created through registration. Admin and Bot accounts must be created by system administrators.'
+      });
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {

@@ -149,11 +149,13 @@ const seedDatabase = async () => {
     console.log('Created applications');
 
     console.log('\n🎉 Database seeded successfully!');
-    console.log('\nSample users created:');
+    console.log('\n🔐 System Accounts (Created by Admin):');
     console.log('Admin: admin@example.com / admin123');
     console.log('Bot: bot@example.com / bot123');
+    console.log('\n👥 Sample Applicant Accounts:');
     console.log('Applicant 1: john@example.com / password123');
     console.log('Applicant 2: jane@example.com / password123');
+    console.log('\n📝 Note: New applicants can register through the frontend, but Admin and Bot accounts must be created by system administrators.');
     console.log('\nJob postings:');
     console.log('- Senior Software Engineer (Technical)');
     console.log('- HR Executive (Non-Technical)');

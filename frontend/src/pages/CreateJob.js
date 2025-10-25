@@ -40,9 +40,9 @@ const CreateJob = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Create Job Posting</h1>
-        <p className="text-gray-600 mt-2">Create a new job role for applicants</p>
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Create Job Posting</h1>
+        <p className="text-gray-600 mt-2 text-sm sm:text-base">Create a new job role for applicants</p>
       </div>
 
       {error && (
@@ -51,7 +51,7 @@ const CreateJob = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
             Job Title *
@@ -61,7 +61,7 @@ const CreateJob = () => {
             name="title"
             type="text"
             required
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+            className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm sm:text-base"
             placeholder="e.g., Senior Software Engineer"
             value={formData.title}
             onChange={handleChange}
@@ -77,7 +77,7 @@ const CreateJob = () => {
             name="description"
             rows={6}
             required
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+            className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm sm:text-base"
             placeholder="Describe the role, responsibilities, and requirements..."
             value={formData.description}
             onChange={handleChange}
@@ -100,7 +100,7 @@ const CreateJob = () => {
 
         <div className="bg-blue-50 rounded-lg p-4">
           <h3 className="text-sm font-medium text-blue-900 mb-2">Role Classification:</h3>
-          <div className="text-sm text-blue-800">
+          <div className="text-xs sm:text-sm text-blue-800">
             {formData.isTechnical ? (
               <div>
                 <p className="font-medium">🤖 Technical Role</p>
@@ -119,18 +119,18 @@ const CreateJob = () => {
           </div>
         </div>
 
-        <div className="flex justify-end space-x-4">
+        <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
           <button
             type="button"
             onClick={() => navigate('/dashboard')}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 text-sm font-medium"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
           >
             {loading ? 'Creating Job...' : 'Create Job Posting'}
           </button>

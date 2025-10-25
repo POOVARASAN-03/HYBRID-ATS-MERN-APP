@@ -139,14 +139,16 @@ const getBotDashboard = async (req, res) => {
         $project: {
           jobTitle: 1,
           status: 1,
-          'history.prevStatus': 1,
-          'history.newStatus': 1,
-          'history.source': 1,
-          'history.timestamp': 1,
-          'history.note': 1
+          prevStatus: '$history.prevStatus',
+          newStatus: '$history.newStatus',
+          source: '$history.source',
+          timestamp: '$history.timestamp',
+          note: '$history.note'
         }
       }
     ]);
+
+    console.log('Bot activity data:', JSON.stringify(botActivity, null, 2));
 
     // Get application counts by status for technical applications
     const statusCounts = await Application.aggregate([

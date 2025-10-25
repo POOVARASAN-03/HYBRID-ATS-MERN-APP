@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import AuthImagePattern from '../skeletons/AuthImagePattern';
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -26,98 +23,135 @@ const Login = () => {
     setLoading(true);
 
     const result = await login(formData.email, formData.password);
-    
+
     if (result.success) {
       navigate('/dashboard');
     } else {
       setError(result.message);
     }
-    
+
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link
-              to="/register"
-              className="font-medium text-primary-600 hover:text-primary-500"
-            >
-              create a new account
-            </Link>
-          </p>
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-slate-50">
+      {/* Left Side - Form */}
+      <div className="flex flex-col justify-center items-center p-4 sm:p-6 lg:p-12 min-h-screen py-8">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] p-6 sm:p-8 lg:p-10 mx-auto mb-8">
+          <div className="space-y-6">
+          {/* Logo & Title */}
+          <div className="text-center mb-8">
+            <div className="flex flex-col items-center gap-4 group">
+              <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center transition-all duration-300 group-hover:bg-slate-200 group-hover:scale-110">
+                <Mail className="w-8 h-8 text-slate-600" />
+              </div>
+              <div className="space-y-2">
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">Welcome Back</h1>
+                <p className="text-slate-500 text-sm sm:text-base">Sign in to your account</p>
+              </div>
+            </div>
+          </div>
+  
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Email */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-slate-700">
+                  Email
+                </label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-slate-400 group-focus-within:text-slate-600 transition-colors" />
+                  </div>
+                  <input
+                    type="email"
+                    name="email"
+                    className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-slate-300 focus:ring-2 focus:ring-slate-200 focus:outline-none transition-all duration-200 text-slate-800 placeholder-slate-400"
+                    placeholder="you@example.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+    
+              {/* Password */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-slate-700">
+                  Password
+                </label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-slate-600 transition-colors" />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    className="w-full pl-12 pr-12 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-slate-300 focus:ring-2 focus:ring-slate-200 focus:outline-none transition-all duration-200 text-slate-800 placeholder-slate-400"
+                    placeholder="••••••••"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center hover:bg-slate-100 rounded-r-xl transition-colors"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5 text-slate-400 hover:text-slate-600 transition-colors" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-slate-400 hover:text-slate-600 transition-colors" />
+                    )}
+                  </button>
+                </div>
+              </div>
+    
+              {/* Error */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                  {error}
+                </div>
+              )}
+    
+              {/* Submit */}
+              <button
+                type="submit"
+                className="w-full py-3 px-4 bg-slate-800 text-white font-medium rounded-xl hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition-all duration-200 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Signing in...
+                  </span>
+                ) : (
+                  'Sign in'
+                )}
+              </button>
+            </form>
+  
+            {/* Signup Link */}
+            <div className="text-center pt-4">
+              <p className="text-slate-500 text-sm">
+                Don&apos;t have an account?{' '}
+                <Link 
+                  to="/register" 
+                  className="text-slate-700 font-medium hover:text-slate-800 transition-colors duration-200 underline decoration-slate-300 hover:decoration-slate-400"
+                >
+                  Create account
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
-              {error}
-            </div>
-          )}
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
-
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Demo accounts:
-            </p>
-            <div className="mt-2 space-y-1 text-xs text-gray-500">
-              <p>Admin: admin@example.com / admin123</p>
-              <p>Bot: bot@example.com / bot123</p>
-              <p>Applicant: john@example.com / password123</p>
-            </div>
-          </div>
-        </form>
       </div>
+  
+      {/* Right Side - Image/Pattern */}
+      <AuthImagePattern
+      title="Welcome to Hybrid ATS"
+      subtitle="Sign in to manage your hiring workflow, track applicants, and collaborate efficiently."
+    />
     </div>
   );
 };

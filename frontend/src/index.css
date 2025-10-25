@@ -41,7 +41,7 @@ code {
   top: 1.25rem;
   width: 2px;
   height: calc(100% + 0.5rem);
-  background-color: #e5e7eb;
+  background-color: #fff;
 }
 
 .timeline-item:last-child::after {

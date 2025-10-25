@@ -8,6 +8,36 @@ const BotDashboard = () => {
   const [error, setError] = useState('');
   const [isRunning, setIsRunning] = useState(false);
 
+  // Helper function to safely parse dates
+  const formatDate = (dateString) => {
+    if (!dateString) return 'No date';
+    
+    try {
+      // Handle different date formats
+      let date;
+      if (typeof dateString === 'string') {
+        // Try parsing as ISO string first
+        date = new Date(dateString);
+      } else if (dateString instanceof Date) {
+        date = dateString;
+      } else if (dateString.$date) {
+        // Handle MongoDB date objects
+        date = new Date(dateString.$date);
+      } else {
+        date = new Date(dateString);
+      }
+      
+      if (isNaN(date.getTime())) {
+        console.warn('Invalid date:', dateString);
+        return 'Invalid date';
+      }
+      return date.toLocaleString();
+    } catch (error) {
+      console.error('Date parsing error:', error, 'Input:', dateString);
+      return 'Invalid date';
+    }
+  };
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
@@ -60,13 +90,16 @@ const BotDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Bot Dashboard</h1>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Bot Dashboard</h1>
+          <p className="text-sm text-gray-600 mt-1">Automated processing for technical applications</p>
+        </div>
         <button
           onClick={runBot}
           disabled={isRunning}
-          className="bg-purple-500 text-white px-6 py-2 rounded-md hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+          className="bg-purple-500 text-white px-4 sm:px-6 py-2 rounded-md hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 text-sm font-medium"
         >
           {isRunning ? (
             <>
@@ -90,13 +123,13 @@ const BotDashboard = () => {
 
       {/* Bot Status Cards */}
       {dashboardData?.statusCounts && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {dashboardData.statusCounts.map((status) => (
-            <div key={status._id} className="bg-white rounded-lg shadow-sm border p-6">
+            <div key={status._id} className="bg-white rounded-lg shadow-sm border p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">{status.count}</div>
-                  <div className="text-sm text-gray-600">{status._id}</div>
+                  <div className="text-xl sm:text-2xl font-bold text-gray-900">{status.count}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">{status._id}</div>
                 </div>
                 <div className={`w-3 h-3 rounded-full ${getStatusColor(status._id)}`}></div>
               </div>
@@ -107,12 +140,12 @@ const BotDashboard = () => {
 
       {/* Technical Applications */}
       <div className="bg-white rounded-lg shadow-sm border">
-        <div className="px-6 py-4 border-b">
+        <div className="px-4 sm:px-6 py-4 border-b">
           <h2 className="text-lg font-semibold text-gray-900">Technical Applications</h2>
           <p className="text-sm text-gray-600">Applications managed by bot automation</p>
         </div>
         
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {dashboardData?.technicalApplications?.length === 0 ? (
             <div className="text-center py-8">
               <div className="text-gray-400 text-4xl mb-2">🤖</div>
@@ -123,9 +156,9 @@ const BotDashboard = () => {
               {dashboardData?.technicalApplications?.map((application) => (
                 <div key={application._id} className="border rounded-lg p-4 hover:bg-gray-50">
                   <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="font-medium text-gray-900">{application.jobTitle}</h3>
-                      <p className="text-sm text-gray-600">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-gray-900 text-sm sm:text-base">{application.jobTitle}</h3>
+                      <p className="text-xs sm:text-sm text-gray-600">
                         Applicant: {application.applicantId?.name || 'Unknown'}
                       </p>
                     </div>
@@ -134,8 +167,8 @@ const BotDashboard = () => {
                     </span>
                   </div>
                   
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <span>Applied: {new Date(application.createdAt).toLocaleDateString()}</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs sm:text-sm text-gray-500 gap-2">
+                    <span>Applied: {formatDate(application.createdAt)}</span>
                     <Link
                       to={`/applications/${application._id}`}
                       className="text-primary-600 hover:text-primary-700 font-medium"
@@ -153,26 +186,26 @@ const BotDashboard = () => {
       {/* Recent Bot Activity */}
       {dashboardData?.botActivity && dashboardData.botActivity.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm border">
-          <div className="px-6 py-4 border-b">
+          <div className="px-4 sm:px-6 py-4 border-b">
             <h2 className="text-lg font-semibold text-gray-900">Recent Bot Activity</h2>
             <p className="text-sm text-gray-600">Latest automated status changes</p>
           </div>
           
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="space-y-3">
               {dashboardData.botActivity.slice(0, 10).map((activity, index) => (
-                <div key={index} className="flex items-center justify-between py-2 border-b last:border-b-0">
+                <div key={index} className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 border-b last:border-b-0 gap-2">
                   <div className="flex items-center space-x-3">
                     <span className="text-lg">🤖</span>
                     <div>
-                      <span className="font-medium text-gray-900">{activity.jobTitle}</span>
-                      <div className="text-sm text-gray-600">
+                      <span className="font-medium text-gray-900 text-sm sm:text-base">{activity.jobTitle}</span>
+                      <div className="text-xs sm:text-sm text-gray-600">
                         {activity.prevStatus} → {activity.newStatus}
                       </div>
                     </div>
                   </div>
-                  <div className="text-sm text-gray-500">
-                    {new Date(activity.timestamp).toLocaleString()}
+                  <div className="text-xs sm:text-sm text-gray-500">
+                    {formatDate(activity.timestamp)}
                   </div>
                 </div>
               ))}
@@ -182,9 +215,9 @@ const BotDashboard = () => {
       )}
 
       {/* Bot Information */}
-      <div className="bg-blue-50 rounded-lg p-6">
+      <div className="bg-blue-50 rounded-lg p-4 sm:p-6">
         <h3 className="text-lg font-semibold text-blue-900 mb-2">Bot Information</h3>
-        <div className="text-sm text-blue-800 space-y-1">
+        <div className="text-xs sm:text-sm text-blue-800 space-y-1">
           <p>• Bot runs automatically every 30 minutes</p>
           <p>• Only processes technical applications</p>
           <p>• Follows deterministic progression rules</p>
