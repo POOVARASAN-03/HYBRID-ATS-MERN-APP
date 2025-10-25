@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-
+import { Album } from 'lucide-react';
 const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -29,8 +29,8 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-14 sm:h-16">
           <div className="flex items-center">
-            <Link to="/dashboard" className="text-lg sm:text-xl font-bold text-gray-800">
-              Hybrid ATS  
+            <Link to="/dashboard" className="text-xl sm:text-2xl font-bold text-slate-800">
+              <span>Hybrid ATS </span> 
             </Link>
           </div>
 
@@ -62,13 +62,13 @@ const Navbar = () => {
               <div className="flex items-center space-x-1 sm:space-x-2">
                 <Link
                   to="/login"
-                  className="text-gray-600 hover:text-gray-800 px-2 sm:px-3 py-2 rounded-md hover:bg-gray-100 transition-colors text-sm"
+                  className="text-gray-600 hover:text-gray-800 px-2 sm:px-3 py-2 rounded-md hover:bg-gray-100 transition-colors text-base"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-primary-500 text-white px-3 sm:px-4 py-2 rounded-md hover:bg-primary-600 transition-colors text-sm"
+                  className="bg-slate-800 text-white px-3 sm:px-4 py-2 rounded-md hover:bg-slate-700 transition-colors text-base"
                 >
                   Register
                 </Link>

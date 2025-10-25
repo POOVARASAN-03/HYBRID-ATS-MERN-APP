@@ -1,5 +1,6 @@
+import { NotebookPen } from 'lucide-react';
 import React from 'react';
-
+import { Bot, User } from 'lucide-react';
 const StatusTimeline = ({ history }) => {
   const getStatusColor = (status) => {
     switch (status) {
@@ -23,13 +24,13 @@ const StatusTimeline = ({ history }) => {
   const getSourceIcon = (source) => {
     switch (source) {
       case 'bot-cron':
-        return '🤖';
+        return <Bot/>;
       case 'bot-manual':
-        return '🤖';
+        return <Bot/>;
       case 'manual':
-        return '👤';
+        return <User />;
       default:
-        return '📝';
+        return <NotebookPen/>;
     }
   };
 

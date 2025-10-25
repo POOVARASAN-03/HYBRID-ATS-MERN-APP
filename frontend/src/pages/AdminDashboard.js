@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
+import { Bot } from 'lucide-react';
+import { NotebookPen, Eye, BriefcaseConveyorBelt, Trophy, ChartColumnIncreasing, Speech, Pencil, Trash2 } from 'lucide-react';
+
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [nonTechnicalApplications, setNonTechnicalApplications] = useState([]);
@@ -48,10 +51,15 @@ const AdminDashboard = () => {
       // Refresh applications
       const response = await axiosInstance.get('/admin/applications/non-technical');
       setNonTechnicalApplications(response.data.data.applications);
+      // success toast
+      toast.success('Application updated successfully', {
+        autoClose: 3000,
+        position: 'top-right',
+      });
     } catch (err) {
       console.error('Error updating application:', err);
       toast.error('Failed to update application status',{
-        duration: 3000,
+        autoClose: 3000,
         position: 'top-right',
       });
     }
@@ -69,14 +77,14 @@ const AdminDashboard = () => {
         // Refresh jobs
         const response = await axiosInstance.get('/jobs');
         setJobs(response.data.data.jobs);
-        toast.success('job Deleted Successfully!',{
-          duration: 3000,
+        toast.success('Job deleted successfully!',{
+          autoClose: 3000,
           position: 'top-right',
         });
       } catch (err) {
         console.error('Error deleting job:', err);
         toast.error('Failed to delete job posting',{
-          duration: 3000,
+          autoClose: 3000,
           position: 'top-right',
         });
       }
@@ -85,13 +93,17 @@ const AdminDashboard = () => {
 
   const handleJobSubmit = async (jobData) => {
     try {
+      let res;
       if (editingJob) {
-        await axiosInstance.put(`/jobs/${editingJob._id}`, jobData);
-        alert('Job posting updated successfully');
+        res = await axiosInstance.put(`/jobs/${editingJob._id}`, jobData);
       } else {
-        await axiosInstance.post('/jobs', jobData);
-        alert('Job posting created successfully');
+        res = await axiosInstance.post('/jobs', jobData);
       }
+      // success toast (use server message if present)
+      toast.success(res?.data?.message || (editingJob ? 'Job posting updated successfully' : 'Job posting created successfully'), {
+        autoClose: 3000,
+        position: 'top-right',
+      });
       
       // Refresh jobs
       const response = await axiosInstance.get('/jobs');
@@ -101,7 +113,7 @@ const AdminDashboard = () => {
     } catch (err) {
       console.error('Error saving job:', err);
       toast.error('Failed to save job posting',{
-        duration: 3000,
+        autoClose: 3000,
         position: 'top-right',
       });
     }
@@ -165,7 +177,7 @@ const AdminDashboard = () => {
                 <div className="text-xs sm:text-sm text-gray-600 mt-1">Applied</div>
               </div>
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-blue-600 text-sm">📝</span>
+                <NotebookPen className="w-10 h-10 text-blue-600" />
               </div>
             </div>
           </div>
@@ -179,7 +191,7 @@ const AdminDashboard = () => {
                 <div className="text-xs sm:text-sm text-gray-600 mt-1">Reviewed</div>
               </div>
               <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                <span className="text-yellow-600 text-sm">👀</span>
+                <Eye className="w-10 h-10 text-yellow-600" />
               </div>
             </div>
           </div>
@@ -193,7 +205,7 @@ const AdminDashboard = () => {
                 <div className="text-xs sm:text-sm text-gray-600 mt-1">Interviews</div>
               </div>
               <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <span className="text-purple-600 text-sm">💼</span>
+                <BriefcaseConveyorBelt className="w-10 h-10 text-purple-600" />
               </div>
             </div>
           </div>
@@ -207,7 +219,7 @@ const AdminDashboard = () => {
                 <div className="text-xs sm:text-sm text-gray-600 mt-1">Offers</div>
               </div>
               <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <span className="text-green-600 text-sm">🎉</span>
+                <Trophy className="w-10 h-10 text-green-600" />
               </div>
             </div>
           </div>
@@ -226,7 +238,10 @@ const AdminDashboard = () => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              📊 Overview
+              <span className="flex items-center gap-2">
+                <ChartColumnIncreasing className="w-7 h-7" />
+                <span>Overview</span>
+              </span>
             </button>
             <button
               onClick={() => setActiveTab('jobs')}
@@ -236,7 +251,10 @@ const AdminDashboard = () => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              💼 Jobs ({jobs.length})
+              <span className="flex items-center gap-2">
+                <BriefcaseConveyorBelt className="w-7 h-7" />
+                <span>Jobs ({jobs.length})</span>
+              </span>
             </button>
             <button
               onClick={() => setActiveTab('non-technical')}
@@ -246,7 +264,10 @@ const AdminDashboard = () => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              👨‍💼 Non-Tech ({nonTechnicalApplications.length})
+              <span className="flex items-center gap-2">
+                <Speech className="w-7 h-7" />
+                <span>Non-Tech ({nonTechnicalApplications.length})</span>
+              </span>
             </button>
             <button
               onClick={() => setActiveTab('technical')}
@@ -256,7 +277,10 @@ const AdminDashboard = () => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              🤖 Technical ({technicalApplications.length})
+              <span className="flex items-center gap-2">
+                <Bot className="w-7 h-7" />
+                <span>Technical ({technicalApplications.length})</span>
+              </span>
             </button>
           </div>
         </div>
@@ -266,7 +290,12 @@ const AdminDashboard = () => {
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-blue-50 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-blue-900 mb-2">📊 Quick Stats</h3>
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">
+                    <span className="flex items-center gap-2">
+                      <ChartColumnIncreasing className="w-7 h-7" />
+                      <span>Quick Stats</span>
+                    </span>
+                  </h3>
                   <div className="space-y-2 text-sm text-blue-800">
                     <p>• Total Applications: {stats?.applicationStats?.reduce((sum, s) => sum + s.count, 0) || 0}</p>
                     <p>• Active Jobs: {jobs.filter(j => j.status === 'active').length}</p>
@@ -275,7 +304,11 @@ const AdminDashboard = () => {
                   </div>
                 </div>
                 <div className="bg-green-50 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-green-900 mb-2">🎯 Recent Activity</h3>
+                  <h3 className="text-lg font-semibold text-green-900 mb-2">
+                    <span className="flex items-center gap-2">
+                      <ChartColumnIncreasing className="w-7 h-7" />
+                      <span>Recent Activity</span>
+                    </span></h3>
                   <div className="space-y-2 text-sm text-green-800">
                     {stats?.recentApplications?.slice(0, 3).map((app, index) => (
                       <p key={index}>• {app.jobTitle} - {app.status}</p>
@@ -290,7 +323,11 @@ const AdminDashboard = () => {
             <div className="space-y-4">
               {jobs.length === 0 ? (
                 <div className="text-center py-8">
-                  <div className="text-gray-400 text-4xl mb-2">💼</div>
+                  <div className="text-gray-400 text-4xl mb-2">
+                    <span className="flex items-center gap-2">
+                        <BriefcaseConveyorBelt className="w-7 h-7" />
+                        <span>Jobs ({jobs.length})</span>
+                    </span></div>
                   <p className="text-gray-500">No job postings found</p>
                   <Link
                     to="/admin/create-job"
@@ -317,7 +354,7 @@ const AdminDashboard = () => {
           {activeTab === 'non-technical' && (
             nonTechnicalApplications.length === 0 ? (
               <div className="text-center py-8">
-                <div className="text-gray-400 text-4xl mb-2">📋</div>
+                <div className="text-gray-400 text-4xl mb-2"><NotebookPen /></div>
                 <p className="text-gray-500">No non-technical applications found</p>
               </div>
             ) : (
@@ -338,7 +375,7 @@ const AdminDashboard = () => {
           {activeTab === 'technical' && (
             technicalApplications.length === 0 ? (
               <div className="text-center py-8">
-                <div className="text-gray-400 text-4xl mb-2">🤖</div>
+                <div className="text-gray-400 text-4xl mb-2"><Bot/></div>
                 <p className="text-gray-500">No technical applications found</p>
               </div>
             ) : (
@@ -399,28 +436,37 @@ const JobCard = ({ job, onEdit, onDelete }) => {
             {job.description}
           </p>
         </div>
-        <div className="flex flex-col gap-1 ml-2">
+          <div className="flex flex-col gap-1 ml-2">
           <span className={getStatusBadge(job.status)}>
             {job.status}
           </span>
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeBadge(job.isTechnical)}`}>
-            {job.isTechnical ? '🤖 Technical' : '👨‍💼 Non-Tech'}
+            <span className="flex items-center gap-1">
+              {job.isTechnical ? <ChartColumnIncreasing className="w-5 h-5" /> : <Speech className="w-3 h-3" />}
+              <span>{job.isTechnical ? 'Technical' : 'Non-Tech'}</span>
+            </span>
           </span>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-2 mt-4">
+        <div className="flex flex-col sm:flex-row gap-2 mt-4">
         <button
           onClick={() => onEdit(job)}
           className="flex-1 bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition-colors text-xs sm:text-sm"
         >
-          ✏️ Edit
+          <span className="flex items-center justify-center gap-2">
+            <Pencil className="w-6 h-6" />
+            <span>Edit</span>
+          </span>
         </button>
         <button
           onClick={() => onDelete(job._id)}
           className="flex-1 bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition-colors text-xs sm:text-sm"
         >
-          🗑️ Delete
+          <span className="flex items-center justify-center gap-2">
+            <Trash2 className="w-6 h-6" />
+            <span>Delete</span>
+          </span>
         </button>
       </div>
     </div>
@@ -632,7 +678,10 @@ const ApplicationCard = ({ application, onStatusUpdate, getStatusBadge, isEditab
       ) : (
         <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
           <div className="flex items-center">
-            <span className="text-yellow-600 text-xs sm:text-sm font-medium">🤖 Bot Managed</span>
+            <span className="flex items-center gap-2 text-yellow-600 text-xs sm:text-sm font-medium">
+              <Bot className="w-6 h-6" />
+              <span>Bot Managed</span>
+            </span>
             <span className="text-yellow-600 text-xs sm:text-sm ml-2">This application is automatically processed by the bot</span>
           </div>
         </div>

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
-
+import { toast } from 'react-toastify';
+import { ChartColumnIncreasing } from 'lucide-react';
+import { NotebookPen } from 'lucide-react';
 const ApplicantDashboard = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,6 +35,10 @@ const ApplicantDashboard = () => {
       setApplications(response.data.data.applications);
     } catch (err) {
       setError('Failed to fetch applications');
+      toast.error('Failed to fetch applications', {
+        autoClose: 3000,
+        position: 'top-right',
+      });
       console.error('Error fetching applications:', err);
     } finally {
       setLoading(false);
@@ -70,7 +76,11 @@ const ApplicantDashboard = () => {
         {/* Quick Stats */}
       {applications.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">📊 Quick Stats</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    <span className="flex items-center gap-2">
+                      <ChartColumnIncreasing className="w-7 h-7" />
+                      <span>Quick Stats</span>
+                    </span></h3>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div className="text-center bg-blue-50 rounded-lg p-3">
               <div className="text-xl sm:text-2xl font-bold text-blue-600">{applications.length}</div>
@@ -119,7 +129,7 @@ const ApplicantDashboard = () => {
 
       {applications.length === 0 ? (
         <div className="text-center py-8 sm:py-12">
-          <div className="text-gray-400 text-4xl sm:text-6xl mb-4">📝</div>
+          <div className="text-gray-400 text-4xl sm:text-6xl mb-4"><NotebookPen /></div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
           <p className="text-gray-500 mb-4 text-sm sm:text-base">Get started by applying to a job posting</p>
           <Link

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 import {toast} from 'react-toastify';
+import { Bot, User } from 'lucide-react';
 const CreateJob = () => {
   const [formData, setFormData] = useState({
     title: '',
@@ -25,21 +26,22 @@ const CreateJob = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    toast.success('Job created successfully',{
-      duration: 3000,
-      position: 'top-right',
-    })
+    // show success only after the API call succeeds
     setLoading(true);
 
     try {
       await axiosInstance.post('/jobs', formData);
+      toast.success('Job created successfully', {
+        autoClose: 3000,
+        position: 'top-right',
+      });
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create job posting');
       toast.error('Failed to create job posting',{
-        duration: 3000,
+        autoClose: 3000,
         position: 'top-right',
-      })
+      });
       console.error('Error creating job:', err)
     } finally {
       setLoading(false);
@@ -53,11 +55,10 @@ const CreateJob = () => {
         <p className="text-gray-600 mt-2 text-sm sm:text-base">Create a new job role for applicants</p>
       </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md mb-6">
-          {error}
-        </div>
-      )}
+      {error &&toast.error(error, {
+        autoClose: 3000,
+        position: 'top-right',
+      })}
 
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         <div>
@@ -111,14 +112,24 @@ const CreateJob = () => {
           <div className="text-xs sm:text-sm text-blue-800">
             {formData.isTechnical ? (
               <div>
-                <p className="font-medium">🤖 Technical Role</p>
+                <p className="font-medium">
+                  <span className="flex items-center gap-2">
+                    <Bot className="w-4 h-4" />
+                    <span>Technical Role</span>
+                  </span>
+                </p>
                 <p>• Will be automatically processed by Bot</p>
                 <p>• Status progression: Applied → Reviewed → Interview → Offer/Rejected</p>
                 <p>• Admin can view but cannot manually update</p>
               </div>
             ) : (
               <div>
-                <p className="font-medium">👨‍💼 Non-Technical Role</p>
+                <p className="font-medium">
+                  <span className="flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    <span>Non-Technical Role</span>
+                  </span>
+                </p>
                 <p>• Will be manually managed by Admin</p>
                 <p>• Admin can update status and add comments</p>
                 <p>• Full manual control and audit trail</p>
@@ -149,3 +160,4 @@ const CreateJob = () => {
 };
 
 export default CreateJob;
+

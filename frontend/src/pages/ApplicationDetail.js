@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
+import { toast } from 'react-toastify';
 import StatusTimeline from '../components/StatusTimeline';
 
 const ApplicationDetail = () => {
@@ -43,7 +44,10 @@ const ApplicationDetail = () => {
       await fetchApplication();
     } catch (err) {
       console.error('Error adding comment:', err);
-      alert('Failed to add comment');
+      toast.error('Failed to add comment', {
+        autoClose: 3000,
+        position: 'top-right',
+      });
     } finally {
       setSubmittingComment(false);
     }

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
+import { toast } from 'react-toastify';
+import { Bot } from 'lucide-react';
 
 const BotDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -58,12 +60,18 @@ const BotDashboard = () => {
     setIsRunning(true);
     try {
       const response = await axiosInstance.post('/bot/run');
-      alert(`Bot automation completed! Updated ${response.data.data.updatedCount} applications.`);
+      toast.success(`Bot automation completed! Updated ${response.data.data.updatedCount} applications.`, {
+        autoClose: 3000,
+        position: 'top-right',
+      });
       // Refresh dashboard data
       await fetchDashboardData();
     } catch (err) {
       console.error('Error running bot:', err);
-      alert('Failed to run bot automation');
+      toast.error('Failed to run bot automation', {
+        autoClose: 3000,
+        position: 'top-right',
+      });
     } finally {
       setIsRunning(false);
     }
@@ -108,7 +116,7 @@ const BotDashboard = () => {
             </>
           ) : (
             <>
-              <span>🤖</span>
+              <span><Bot/></span>
               <span>Run Bot Now</span>
             </>
           )}
@@ -148,7 +156,7 @@ const BotDashboard = () => {
         <div className="p-4 sm:p-6">
           {dashboardData?.technicalApplications?.length === 0 ? (
             <div className="text-center py-8">
-              <div className="text-gray-400 text-4xl mb-2">🤖</div>
+              <div className="text-gray-400 text-4xl mb-2"><Bot/></div>
               <p className="text-gray-500">No technical applications found</p>
             </div>
           ) : (
@@ -196,7 +204,7 @@ const BotDashboard = () => {
               {dashboardData.botActivity.slice(0, 10).map((activity, index) => (
                 <div key={index} className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 border-b last:border-b-0 gap-2">
                   <div className="flex items-center space-x-3">
-                    <span className="text-lg">🤖</span>
+                    <span className="text-lg"><Bot/></span>
                     <div>
                       <span className="font-medium text-gray-900 text-sm sm:text-base">{activity.jobTitle}</span>
                       <div className="text-xs sm:text-sm text-gray-600">

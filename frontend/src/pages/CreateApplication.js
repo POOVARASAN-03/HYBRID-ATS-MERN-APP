@@ -29,7 +29,7 @@ const CreateApplication = () => {
     } catch (err) {
       setError('Failed to fetch job postings');
       toast.error('Failed to fetch job postings',{
-        duration: 3000,
+        autoClose: 3000,
         position: 'top-right',
       });
     } finally {
@@ -46,12 +46,18 @@ const CreateApplication = () => {
         jobId: jobId
       });
       toast.success('Application submitted successfully',{
-        duration: 3000,
+        autoClose: 3000,
         position: 'top-right',
-      })
+      });
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create application');
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message, {
+          autoClose: 3000,
+          position: 'top-right',
+        });
+      }
       console.error('Error creating application:', err);
     } finally {
       setSubmitting(false);
@@ -89,12 +95,7 @@ const CreateApplication = () => {
           </p>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-8 max-w-2xl mx-auto">
-            {error}
-          </div>
-        )}
+              
 
         {/* Job Cards Grid */}
         {jobs.length === 0 ? (
