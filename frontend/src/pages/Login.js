@@ -3,11 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import AuthImagePattern from '../skeletons/AuthImagePattern';
-
+import {toast} from 'react-toastify';
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
@@ -19,15 +18,21 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
     const result = await login(formData.email, formData.password);
 
     if (result.success) {
+      toast.success('Login successful',{
+        duration: 3000,
+        position: 'top-right',
+      });
       navigate('/dashboard');
     } else {
-      setError(result.message);
+      toast.error('Invaild Credentials',{
+        duration: 5000,
+        position: 'top-right',
+      });
     }
 
     setLoading(false);
@@ -106,13 +111,6 @@ const Login = () => {
                   </button>
                 </div>
               </div>
-    
-              {/* Error */}
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                  {error}
-                </div>
-              )}
     
               {/* Submit */}
               <button

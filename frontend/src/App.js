@@ -11,7 +11,7 @@ import BotDashboard from './pages/BotDashboard';
 import CreateApplication from './pages/CreateApplication';
 import CreateJob from './pages/CreateJob';
 import ApplicationDetail from './pages/ApplicationDetail';
-
+import { ToastContainer } from 'react-toastify';
 function AppContent() {
   const { user, loading } = useAuth();
 
@@ -72,6 +72,18 @@ function AppContent() {
             } />
           </Routes>
         </main>
+        {/* Toast Container - only once in App */}
+        <ToastContainer
+          position="top-center"       // Toast position
+          autoClose={3000}            // Auto close in 3 seconds
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     </Router>
   );

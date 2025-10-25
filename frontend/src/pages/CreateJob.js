@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
-
+import {toast} from 'react-toastify';
 const CreateJob = () => {
   const [formData, setFormData] = useState({
     title: '',
@@ -25,6 +25,10 @@ const CreateJob = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    toast.success('Job created successfully',{
+      duration: 3000,
+      position: 'top-right',
+    })
     setLoading(true);
 
     try {
@@ -32,7 +36,11 @@ const CreateJob = () => {
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create job posting');
-      console.error('Error creating job:', err);
+      toast.error('Failed to create job posting',{
+        duration: 3000,
+        position: 'top-right',
+      })
+      console.error('Error creating job:', err)
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
-
+import {toast} from 'react-toastify';
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [nonTechnicalApplications, setNonTechnicalApplications] = useState([]);
@@ -9,7 +9,6 @@ const AdminDashboard = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   const [showJobModal, setShowJobModal] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
@@ -51,7 +50,10 @@ const AdminDashboard = () => {
       setNonTechnicalApplications(response.data.data.applications);
     } catch (err) {
       console.error('Error updating application:', err);
-      alert('Failed to update application status');
+      toast.error('Failed to update application status',{
+        duration: 3000,
+        position: 'top-right',
+      });
     }
   };
 
@@ -67,10 +69,16 @@ const AdminDashboard = () => {
         // Refresh jobs
         const response = await axiosInstance.get('/jobs');
         setJobs(response.data.data.jobs);
-        alert('Job posting deleted successfully');
+        toast.success('job Deleted Successfully!',{
+          duration: 3000,
+          position: 'top-right',
+        });
       } catch (err) {
         console.error('Error deleting job:', err);
-        alert('Failed to delete job posting');
+        toast.error('Failed to delete job posting',{
+          duration: 3000,
+          position: 'top-right',
+        });
       }
     }
   };
@@ -92,7 +100,10 @@ const AdminDashboard = () => {
       setEditingJob(null);
     } catch (err) {
       console.error('Error saving job:', err);
-      alert('Failed to save job posting');
+      toast.error('Failed to save job posting',{
+        duration: 3000,
+        position: 'top-right',
+      });
     }
   };
 
@@ -142,13 +153,6 @@ const AdminDashboard = () => {
           </Link>
         </div>
       </div>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
-          {error}
-        </div>
-      )}
-
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">

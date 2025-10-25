@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import AuthImagePattern from '../skeletons/AuthImagePattern';
-
+import {toast} from 'react-toastify';
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -11,7 +11,7 @@ const Register = () => {
     password: '',
     confirmPassword: '',
   });
-  const [error, setError] = useState('');
+
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -27,15 +27,20 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      toast.error('Passwords do not match',{
+        duration: 3000,
+        position: 'top-right',
+      });
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+       toast.error('Password must be at least 6 characters long',{
+        duration: 3000,
+        position: 'top-right',
+      });
       return;
     }
 
@@ -50,8 +55,15 @@ const Register = () => {
     
     if (result.success) {
       navigate('/dashboard');
+      toast.success('Account created successfully',{
+        duration: 3000,
+        position: 'top-right',
+      });
     } else {
-      setError(result.message);
+      toast.error('Registration failed',{
+        duration: 3000,
+        position: 'top-right',
+      })
     }
     
     setLoading(false);
@@ -166,14 +178,7 @@ const Register = () => {
                   />
                 </div>
               </div>
-
-              {/* Error */}
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                  {error}
-                </div>
-              )}
-
+             
               {/* Submit */}
               <button
                 type="submit"

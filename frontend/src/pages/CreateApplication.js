@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 import { Briefcase, Clock, Users, CheckCircle, ArrowRight, ChevronDown, ChevronUp, Eye } from 'lucide-react';
-
+import {toast} from 'react-toastify';
 const CreateApplication = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +28,10 @@ const CreateApplication = () => {
       console.log('Fetched jobs:', uniqueJobs.length, 'unique jobs');
     } catch (err) {
       setError('Failed to fetch job postings');
-      console.error('Error fetching jobs:', err);
+      toast.error('Failed to fetch job postings',{
+        duration: 3000,
+        position: 'top-right',
+      });
     } finally {
       setLoading(false);
     }
@@ -42,7 +45,10 @@ const CreateApplication = () => {
       await axiosInstance.post('/applications', {
         jobId: jobId
       });
-      
+      toast.success('Application submitted successfully',{
+        duration: 3000,
+        position: 'top-right',
+      })
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create application');
