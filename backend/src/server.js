@@ -117,9 +117,13 @@ const startServer = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('✅ Connected to MongoDB');
 
-    app.listen(PORT, () => {
+    app.listen(PORT, async() => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
+      if (process.env.RUN_BOT_ON_STARTUP === 'true') {
+        console.log('🔄 Running initial bot automation...');
+        await runBotAutomation();
+      }
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
