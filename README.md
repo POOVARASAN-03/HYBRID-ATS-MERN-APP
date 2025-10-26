@@ -34,20 +34,17 @@ A comprehensive interview application tracking system with role-based authentica
 - npm or yarn
 
 ## 🛠️ Installation & Setup
-
-### Option 1: Docker (Recommended)
-
 1. Clone the repository:
 ```bash
 git clone <repository-url>
 cd interview-tracker
 ```
 
-2. Access the application:
+2. Access the application after starting both services:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:5000
 
-### Option 2: Manual Setup
+### Manual Setup
 
 #### Backend Setup
 
@@ -208,10 +205,7 @@ The bot automatically processes technical applications with deterministic rules:
    - `INTERNAL_BOT_TOKEN`
    - `PORT`
 
-### Docker Production
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
+<!-- Docker-related production instructions removed. Use platform-specific deployment (Vercel/Railway/Render) as documented above. -->
 
 ## 🧪 Testing the Application
 
