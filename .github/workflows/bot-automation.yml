@@ -1,0 +1,50 @@
+name: Bot Automation
+
+# Run on schedule
+on:
+  schedule:
+    # Runs every 30 minutes
+    - cron: "*/30 * * * *"
+  workflow_dispatch:  # allows manual trigger
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm install
+
+      # Step 4: Run bot automation
+      - name: Run Bot Automation
+        working-directory: ./backend
+        env:
+          INTERNAL_BOT_TOKEN: ${{ secrets.INTERNAL_BOT_TOKEN }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+        run: |
+          node -e "
+            const axios = require('axios');
+            (async () => {
+              try {
+                const res = await axios.post(process.env.API_BASE_URL + '/api/bot/run', {}, {
+                  headers: { 'X-Bot-Token': process.env.INTERNAL_BOT_TOKEN }
+                });
+                console.log('Bot run success:', res.data);
+              } catch(e) {
+                console.error('Bot run failed:', e.message);
+                process.exit(1);
+              }
+            })();
+          "
