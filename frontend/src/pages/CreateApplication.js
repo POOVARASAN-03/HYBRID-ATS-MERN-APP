@@ -7,6 +7,8 @@ const CreateApplication = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  // Track which job is currently being applied to (jobId), so only that button shows loading
+  const [applyingJobId, setApplyingJobId] = useState(null);
   const [error, setError] = useState('');
   const [expandedCards, setExpandedCards] = useState(new Set());
 
@@ -39,6 +41,7 @@ const CreateApplication = () => {
 
   const handleApply = async (jobId) => {
     setSubmitting(true);
+    setApplyingJobId(jobId);
     setError('');
 
     try {
@@ -61,6 +64,7 @@ const CreateApplication = () => {
       console.error('Error creating application:', err);
     } finally {
       setSubmitting(false);
+      setApplyingJobId(null);
     }
   };
 
@@ -111,7 +115,7 @@ const CreateApplication = () => {
                 <JobCard 
                   job={job} 
                   onApply={handleApply} 
-                  submitting={submitting}
+                  submitting={submitting && applyingJobId === job._id}
                   isExpanded={expandedCards.has(job._id)}
                   onToggleExpanded={() => toggleExpanded(job._id)}
                 />
