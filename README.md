@@ -109,14 +109,6 @@ npm install
 npm start
 ```
 
-## 🔐 Demo Accounts
-
-The seed script creates the following demo accounts:
-
-- **Admin**: admin@example.com / admin123
-- **Bot**: bot@example.com / bot123
-- **Applicant**: john@example.com / password123
-- **Applicant**: jane@example.com / password123
 
 ## 📊 User Roles & Permissions
 
@@ -205,8 +197,6 @@ The bot automatically processes technical applications with deterministic rules:
 - `GET /api/bot/dashboard` - Bot dashboard data
 - `GET /api/bot/stats` - Bot statistics
 
-### 📖 Complete API Documentation
-For detailed API documentation with request/response examples, see [API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
 
 ### 🧪 Postman Collection
 Import the provided Postman collection (`Hybrid_ATS_API.postman_collection.json`) to test all API endpoints with pre-configured requests and test scenarios.
