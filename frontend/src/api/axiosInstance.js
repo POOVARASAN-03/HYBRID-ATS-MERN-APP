@@ -28,10 +28,24 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      // If the 401 comes from login/register endpoints, don't redirect —
+      // let the caller (login form) handle the error and show a message.
+      const requestUrl = error.config?.url || '';
+      const isAuthEndpoint = requestUrl.includes('/auth/login') || requestUrl.includes('/auth/register');
+
+      if (!isAuthEndpoint) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        // Try client-side navigation first to avoid full-page reload on static hosts.
+        try {
+          window.history.pushState({}, '', '/login');
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        } catch (e) {
+          window.location.href = '/login';
+        }
+      }
     }
+
     return Promise.reject(error);
   }
 );
