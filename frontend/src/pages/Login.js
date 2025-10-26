@@ -23,14 +23,15 @@ const Login = () => {
     const result = await login(formData.email, formData.password);
 
     if (result.success) {
-      toast.success('Login successful',{
-        duration: 3000,
+      toast.success('Login successful', {
+        autoClose: 3000,
         position: 'top-right',
       });
       navigate('/dashboard');
     } else {
-      toast.error('Invaild Credentials',{
-        duration: 5000,
+      // show server-provided error message when available
+      toast.error(result.message || 'Invalid credentials', {
+        autoClose: 5000,
         position: 'top-right',
       });
     }
