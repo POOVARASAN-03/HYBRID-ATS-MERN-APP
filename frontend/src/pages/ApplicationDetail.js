@@ -184,18 +184,19 @@ const ApplicationDetail = () => {
         
         {/* Add Comment Form */}
         <form onSubmit={handleAddComment} className="mb-6">
-          <div className="flex space-x-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 space-y-2 sm:space-y-0">
             <input
               type="text"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Add a comment..."
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              className="w-full sm:flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              aria-label="Add a comment"
             />
             <button
               type="submit"
               disabled={!newComment.trim() || submittingComment}
-              className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed text-center"
             >
               {submittingComment ? 'Adding...' : 'Add Comment'}
             </button>
@@ -209,7 +210,7 @@ const ApplicationDetail = () => {
           ) : (
             application.comments.map((comment, index) => (
               <div key={index} className="border-l-4 border-gray-200 pl-4">
-                <div className="flex justify-between items-start mb-1">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-1">
                   <div className="flex items-center space-x-2">
                     <span className="font-medium text-gray-900">{comment.by}</span>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -220,11 +221,11 @@ const ApplicationDetail = () => {
                       {comment.role}
                     </span>
                   </div>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 mt-2 sm:mt-0 whitespace-normal break-words max-w-full sm:max-w-xs text-right">
                     {new Date(comment.date).toLocaleString()}
                   </span>
                 </div>
-                <p className="text-gray-700">{comment.text}</p>
+                <p className="text-gray-700 break-words max-w-full">{comment.text}</p>
               </div>
             ))
           )}

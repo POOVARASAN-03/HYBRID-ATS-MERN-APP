@@ -49,13 +49,13 @@ const StatusTimeline = ({ history }) => {
         {history.map((item, index) => (
           <div key={index} className="timeline-item">
             <div className="bg-white rounded-lg shadow-sm border p-4">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">{getSourceIcon(item.source)}</span>
                   <span className="font-medium text-gray-900">{item.updatedBy}</span>
                   <span className="text-sm text-gray-500">({item.source})</span>
                 </div>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-500 mt-2 sm:mt-0 whitespace-normal break-words max-w-full sm:max-w-xs text-right">
                   {new Date(item.timestamp).toLocaleString()}
                 </span>
               </div>
