@@ -123,6 +123,7 @@ const startServer = async () => {
       if (process.env.RUN_BOT_ON_STARTUP === 'true') {
         console.log('🔄 Running initial bot automation...');
         await runBotAutomation();
+        process.env.RUN_BOT_ON_STARTUP = 'false'; // Prevent re-running on restarts
       }
     });
   } catch (error) {
