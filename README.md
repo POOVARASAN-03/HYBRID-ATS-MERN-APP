@@ -1,6 +1,13 @@
-# Interview Application Tracker
+# Hybrid ATS (Applicant Tracking System)
 
 A comprehensive interview application tracking system with role-based authentication, automated bot processing, and full traceability.
+
+## 🌐 Live Demo
+
+- **Frontend**: [https://hybrid-ats-mern-app.onrender.com](https://hybrid-ats-mern-app.onrender.com)
+- **Backend API**: [https://hybridatsapi.onrender.com](https://hybridatsapi.onrender.com)
+- **API Documentation**: See `API_DOCUMENTATION.md` for complete API reference
+- **Postman Collection**: Import `Hybrid_ATS_API.postman_collection.json` for testing
 
 ## 🚀 Features
 
@@ -11,6 +18,7 @@ A comprehensive interview application tracking system with role-based authentica
 - **Admin Dashboard**: Manual management for non-technical applications
 - **Timeline View**: Complete history and traceability for all applications
 - **Responsive UI**: Modern, mobile-friendly interface with Tailwind CSS
+- **RESTful API**: Complete API with comprehensive documentation
 
 ## 🏗️ Architecture
 
@@ -156,59 +164,72 @@ The bot automatically processes technical applications with deterministic rules:
 - Secure password hashing with bcrypt
 - Internal bot token for cron security
 
-## 📱 API Endpoints
+## 📱 API Documentation
 
-### Authentication
-- `POST /api/auth/register` - User registration
+### Quick Reference
+- **Base URL**: `https://hybridatsapi.onrender.com`
+- **Health Check**: `GET /health`
+- **Authentication**: JWT Bearer tokens required for protected routes
+
+### API Endpoints
+
+#### Authentication
+- `POST /api/auth/register` - User registration (applicant only)
 - `POST /api/auth/login` - User login
 - `GET /api/auth/profile` - Get user profile
 
-### Jobs
+#### Jobs
 - `POST /api/jobs` - Create job (Admin only)
-- `GET /api/jobs` - List jobs
+- `GET /api/jobs` - List jobs (with filtering)
 - `GET /api/jobs/:id` - Get job details
 - `PUT /api/jobs/:id` - Update job (Admin only)
 - `DELETE /api/jobs/:id` - Delete job (Admin only)
 
-### Applications
+#### Applications
 - `POST /api/applications` - Create application (Applicant)
-- `GET /api/applications` - List applications (role-based)
+- `GET /api/applications` - List applications (role-based filtering)
 - `GET /api/applications/:id` - Get application details
 - `PUT /api/applications/:id/status` - Update status (Admin/Bot)
 - `POST /api/applications/:id/comments` - Add comment
 
-### Admin
+#### Admin Management
 - `GET /api/admin/dashboard` - Dashboard statistics
 - `GET /api/admin/applications/non-technical` - Non-technical applications
+- `GET /api/admin/applications/technical` - Technical applications (read-only)
 - `PUT /api/admin/applications/:id` - Update non-technical application
+- `GET /api/admin/users` - Get all users
+- `PUT /api/admin/users/:id/role` - Update user role
 
-### Bot
+#### Bot Automation
 - `POST /api/bot/run` - Run bot automation
 - `GET /api/bot/dashboard` - Bot dashboard data
 - `GET /api/bot/stats` - Bot statistics
 
+### 📖 Complete API Documentation
+For detailed API documentation with request/response examples, see [API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
+
+### 🧪 Postman Collection
+Import the provided Postman collection (`Hybrid_ATS_API.postman_collection.json`) to test all API endpoints with pre-configured requests and test scenarios.
+
 ## 🚀 Deployment
 
-### Vercel (Frontend)
-1. Connect your GitHub repository to Vercel
-2. Set build command: `npm run build`
-3. Set output directory: `build`
-4. Add environment variable: `REACT_APP_API_URL=https://your-backend-url.com/api`
+### Current Deployment
+- **Frontend**: Deployed on Render at [https://hybrid-ats-mern-app.onrender.com](https://hybrid-ats-mern-app.onrender.com)
+- **Backend**: Deployed on Render at [https://hybridatsapi.onrender.com](https://hybridatsapi.onrender.com)
+- **Database**: MongoDB Atlas
 
-### Railway/Render (Backend)
-1. Connect your GitHub repository
-2. Set build command: `npm install`
-3. Set start command: `npm start`
-4. Add environment variables:
-   - `MONGODB_URI`
-   - `JWT_SECRET`
-   - `INTERNAL_BOT_TOKEN`
-   - `PORT`
-
-<!-- Docker-related production instructions removed. Use platform-specific deployment (Vercel/Railway/Render) as documented above. -->
 
 ## 🧪 Testing the Application
 
+### Live Demo Testing
+1. **Visit the Live Application**: [https://hybrid-ats-mern-app.onrender.com](https://hybrid-ats-mern-app.onrender.com)
+
+### API Testing
+1. **Import Postman Collection**: Use `Hybrid_ATS_API.postman_collection.json`
+2. **Set Base URL**: `https://hybridatsapi.onrender.com`
+3. **Run Test Scenarios**: Complete application flow tests included
+
+### Local Testing
 1. **Login as Applicant**:
    - Create applications for different jobs
    - View application timeline
@@ -229,38 +250,8 @@ The bot automatically processes technical applications with deterministic rules:
    - Wait for cron or trigger manually
    - Observe status progression
 
-## 📝 Environment Variables
-
-### Backend (.env)
-```env
-MONGODB_URI=mongodb://localhost:27017/interview-tracker
-JWT_SECRET=your_jwt_secret_key_here
-INTERNAL_BOT_TOKEN=bot_secret_token_here
-PORT=5000
-NODE_ENV=development
-```
-
-### Frontend (.env)
-```env
-REACT_APP_API_URL=http://localhost:5000/api
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🆘 Support
-
-For support and questions, please open an issue in the GitHub repository.
-
----
-
-**Built with ❤️ for interview management and automation**
