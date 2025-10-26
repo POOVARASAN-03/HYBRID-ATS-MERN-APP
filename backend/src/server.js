@@ -9,13 +9,11 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Load .env
-dotenv.config({ path: join(__dirname, '../.env') });
+// Load .env (backend/.env) as early as possible
+const dotenvResult = dotenv.config({ path: join(__dirname, '../.env') });
 
-// Set default env variables if missing
-process.env.JWT_SECRET ||= 'your_jwt_secret_key_here_change_in_production';
-process.env.INTERNAL_BOT_TOKEN ||= 'bot_secret_token_here_change_in_production';
-process.env.MONGODB_URI ||= 'mongodb://localhost:27017/interview-tracker';
+console.log('MONGODB_URI (env):', process.env.MONGODB_URI);
+console.log('JWT_SECRET (env):', process.env.JWT_SECRET);
 
 // Debug
 console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'Loaded' : 'NOT LOADED');
@@ -109,20 +107,19 @@ export const runBotAutomation = async () => {
 // Connect to MongoDB and start server
 const startServer = async () => {
   try {
+    // Fail fast if MONGODB_URI is not provided. Do NOT default to localhost here.
+    if (!process.env.MONGODB_URI) {
+      console.error('\n❌ MONGODB_URI is not set.');
+      console.error('Please create a `backend/.env` (use `env.example`) and set `MONGODB_URI` to your MongoDB connection string.');
+      process.exit(1);
+    }
+
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('✅ Connected to MongoDB');
 
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
-
-      // Run bot automation once on 
-      /*
-      setTimeout(() => {
-        console.log('🔄 Running initial bot automation...');
-        runBotAutomation();
-      }, 5000);
-      */
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
