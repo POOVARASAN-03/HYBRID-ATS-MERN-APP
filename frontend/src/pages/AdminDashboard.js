@@ -450,25 +450,22 @@ const JobCard = ({ job, onEdit, onDelete }) => {
       </div>
 
         <div className="flex flex-col sm:flex-row gap-2 mt-4">
-        <button
-          onClick={() => onEdit(job)}
-          className="flex-1 bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition-colors text-xs sm:text-sm"
-        >
-          <span className="flex items-center justify-center gap-2">
-            <Pencil className="w-6 h-6" />
+          <button
+            onClick={() => onEdit(job)}
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Pencil className="w-5 h-5" />
             <span>Edit</span>
-          </span>
-        </button>
-        <button
-          onClick={() => onDelete(job._id)}
-          className="flex-1 bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition-colors text-xs sm:text-sm"
-        >
-          <span className="flex items-center justify-center gap-2">
-            <Trash2 className="w-6 h-6" />
+          </button>
+
+          <button
+            onClick={() => onDelete(job._id)}
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Trash2 className="w-5 h-5" />
             <span>Delete</span>
-          </span>
-        </button>
-      </div>
+          </button>
+        </div>
     </div>
   );
 };

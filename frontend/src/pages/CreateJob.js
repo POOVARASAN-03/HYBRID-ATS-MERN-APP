@@ -2,14 +2,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 import {toast} from 'react-toastify';
-import { Bot, User } from 'lucide-react';
+import { Bot, User, Plus, X } from 'lucide-react';
 const CreateJob = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     isTechnical: false,
-    status: 'active'
+    status: 'active',
+    keyRequirements: [],
+    requiredSkills: []
   });
+  const [newRequirement, setNewRequirement] = useState('');
+  const [newSkill, setNewSkill] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -21,6 +25,54 @@ const CreateJob = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+  };
+
+  const handleAddRequirement = () => {
+    if (newRequirement.trim() && !formData.keyRequirements.includes(newRequirement.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        keyRequirements: [...prev.keyRequirements, newRequirement.trim()]
+      }));
+      setNewRequirement('');
+    }
+  };
+
+  const handleAddSkill = () => {
+    if (newSkill.trim() && !formData.requiredSkills.includes(newSkill.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        requiredSkills: [...prev.requiredSkills, newSkill.trim()]
+      }));
+      setNewSkill('');
+    }
+  };
+
+  const handleRemoveRequirement = (reqToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      keyRequirements: prev.keyRequirements.filter(req => req !== reqToRemove)
+    }));
+  };
+
+  const handleRemoveSkill = (skillToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      requiredSkills: prev.requiredSkills.filter(skill => skill !== skillToRemove)
+    }));
+  };
+
+  const handleRequirementKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddRequirement();
+    }
+  };
+
+  const handleSkillKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddSkill();
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -105,6 +157,95 @@ const CreateJob = () => {
           <label htmlFor="isTechnical" className="ml-2 block text-sm text-gray-900">
             Technical Role (will be processed by Bot)
           </label>
+        </div>
+
+        {/* Key Requirements */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Key Requirements
+          </label>
+          <div className="flex space-x-2 mb-3">
+            <input
+              type="text"
+              value={newRequirement}
+              onChange={(e) => setNewRequirement(e.target.value)}
+              onKeyPress={handleRequirementKeyPress}
+              placeholder="Add a key requirement..."
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm"
+            />
+            <button
+              type="button"
+              onClick={handleAddRequirement}
+              className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors text-sm"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+          {formData.keyRequirements.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {formData.keyRequirements.map((req, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm"
+                >
+                  {req}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveRequirement(req)}
+                    className="ml-2 text-primary-400 hover:text-primary-600"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Required Skills (used for resume matching) */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Required Skills
+          </label>
+          <div className="flex space-x-2 mb-3">
+            <input
+              type="text"
+              value={newSkill}
+              onChange={(e) => setNewSkill(e.target.value)}
+              onKeyPress={handleSkillKeyPress}
+              placeholder="Add a skill keyword..."
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm"
+            />
+            <button
+              type="button"
+              onClick={handleAddSkill}
+              className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors text-sm"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+          {formData.requiredSkills.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {formData.requiredSkills.map((skill, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm"
+                >
+                  {skill}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveSkill(skill)}
+                    className="ml-2 text-primary-400 hover:text-primary-600"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+          <p className="text-xs text-gray-500 mt-1">
+            These skills will be used for resume matching and scoring
+          </p>
         </div>
 
         <div className="bg-blue-50 rounded-lg p-4">

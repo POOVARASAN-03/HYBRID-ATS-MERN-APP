@@ -42,6 +42,12 @@ const StatusTimeline = ({ history }) => {
     );
   }
 
+  const getDisplayNote = (note) => {
+    if (!note) return '';
+    if (/resume match/i.test(note)) return '';
+    return note;
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">Status Timeline</h3>
@@ -71,9 +77,9 @@ const StatusTimeline = ({ history }) => {
                 </span>
               </div>
               
-              {item.note && (
+              {getDisplayNote(item.note) && (
                 <p className="text-sm text-gray-600 mt-2 p-2 bg-gray-50 rounded">
-                  {item.note}
+                  {getDisplayNote(item.note)}
                 </p>
               )}
             </div>

@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 import { toast } from 'react-toastify';
 import StatusTimeline from '../components/StatusTimeline';
+import { FileText, Download, Star, User, Briefcase } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const ApplicationDetail = () => {
   const { id } = useParams();
@@ -12,6 +14,7 @@ const ApplicationDetail = () => {
   const [error, setError] = useState('');
   const [newComment, setNewComment] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchApplication();
@@ -142,6 +145,15 @@ const ApplicationDetail = () => {
                   {new Date(application.updatedAt).toLocaleString()}
                 </span>
               </div>
+              {application.matchScore > 0 && user && (user.role === 'admin' || user.role === 'bot') && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Resume Match:</span>
+                  <span className="flex items-center text-gray-900">
+                    <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                    {application.matchScore}%
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -208,7 +220,13 @@ const ApplicationDetail = () => {
           {application.comments.length === 0 ? (
             <p className="text-gray-500 text-center py-4">No comments yet</p>
           ) : (
-            application.comments.map((comment, index) => (
+            application.comments
+              .map((comment) => ({
+                ...comment,
+                _displayText: /resume match|match score/i.test(comment.text || '') ? '' : comment.text,
+              }))
+              .filter((c) => c._displayText)
+              .map((comment, index) => (
               <div key={index} className="border-l-4 border-gray-200 pl-4">
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-1">
                   <div className="flex items-center space-x-2">
@@ -225,7 +243,7 @@ const ApplicationDetail = () => {
                     {new Date(comment.date).toLocaleString()}
                   </span>
                 </div>
-                <p className="text-gray-700 break-words max-w-full">{comment.text}</p>
+                <p className="text-gray-700 break-words max-w-full">{comment._displayText}</p>
               </div>
             ))
           )}
