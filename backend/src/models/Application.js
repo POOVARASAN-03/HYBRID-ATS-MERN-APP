@@ -76,7 +76,41 @@ const ApplicationSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
     }
-  }]
+  }],
+  resume: {
+    content: {
+      type: Buffer, // Store the file content as binary data
+      required: false
+    },
+    originalName: {
+      type: String,
+      trim: true
+    },
+    size: {
+      type: Number
+    },
+    mimeType: {
+      type: String,
+      trim: true
+    }
+  },
+  // Store skills as a single comma-separated string for easier display
+  // and compatibility with clients that submit skills as JSON strings.
+  skills: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  matchScore: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 100
+  },
+  extractedText: {
+    type: String,
+    trim: true
+  }
 }, {
   timestamps: true
 });

@@ -26,7 +26,21 @@ const JobPostingSchema = new mongoose.Schema({
     type: String,
     enum: ['active', 'inactive', 'closed'],
     default: 'active'
-  }
+  },
+  // Deprecated: kept for backward compatibility. Use requiredSkills instead.
+  requiredKeywords: [{
+    type: String,
+    trim: true
+  }],
+  // New: separate fields for requirements vs skills
+  keyRequirements: [{
+    type: String,
+    trim: true
+  }],
+  requiredSkills: [{
+    type: String,
+    trim: true
+  }]
 }, {
   timestamps: true
 });

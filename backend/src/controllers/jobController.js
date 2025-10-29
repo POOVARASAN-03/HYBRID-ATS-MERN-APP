@@ -13,12 +13,18 @@ const createJob = async (req, res) => {
       });
     }
 
-    const { title, description, isTechnical } = req.body;
+    const { title, description, isTechnical, requiredKeywords, keyRequirements, requiredSkills } = req.body;
 
     const job = new JobPosting({
       title,
       description,
       isTechnical: isTechnical || false,
+      // Store both new fields; keep old for backward compatibility
+      requiredKeywords: requiredKeywords || [],
+      keyRequirements: keyRequirements || [],
+      requiredSkills: (requiredSkills && requiredSkills.length > 0)
+        ? requiredSkills
+        : (requiredKeywords || []),
       createdBy: req.user._id
     });
 
@@ -106,7 +112,7 @@ const updateJob = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { title, description, isTechnical, status } = req.body;
+    const { title, description, isTechnical, status, requiredKeywords, keyRequirements, requiredSkills } = req.body;
 
     const job = await JobPosting.findById(id);
     if (!job) {
@@ -121,6 +127,9 @@ const updateJob = async (req, res) => {
     if (description) job.description = description;
     if (isTechnical !== undefined) job.isTechnical = isTechnical;
     if (status) job.status = status;
+    if (requiredKeywords !== undefined) job.requiredKeywords = requiredKeywords;
+    if (keyRequirements !== undefined) job.keyRequirements = keyRequirements;
+    if (requiredSkills !== undefined) job.requiredSkills = requiredSkills;
 
     await job.save();
 

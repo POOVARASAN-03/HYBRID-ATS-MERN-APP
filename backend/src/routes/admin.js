@@ -6,8 +6,10 @@ import {
   getTechnicalApplications,
   updateNonTechnicalApplication,
   getUsers,
-  updateUserRole
+  updateUserRole,
+  createApplicationForApplicant
 } from '../controllers/adminController.js';
+import { uploadMiddleware } from '../controllers/applicationController.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 import { roleMiddleware } from '../middleware/roleMiddleware.js';
 
@@ -31,6 +33,19 @@ const userRoleValidation = [
     .withMessage('Role must be applicant, admin, or bot')
 ];
 
+const createApplicationValidation = [
+  body('jobId')
+    .isMongoId()
+    .withMessage('Valid job ID is required'),
+  body('applicantId')
+    .isMongoId()
+    .withMessage('Valid applicant ID is required'),
+  body('skills')
+    .optional()
+    .isArray()
+    .withMessage('Skills must be an array')
+];
+
 const queryValidation = [
   query('status')
     .optional()
@@ -47,6 +62,7 @@ router.get('/dashboard', authMiddleware, roleMiddleware('admin'), getDashboardSt
 router.get('/applications/non-technical', authMiddleware, roleMiddleware('admin'), queryValidation, getNonTechnicalApplications);
 router.get('/applications/technical', authMiddleware, roleMiddleware('admin'), queryValidation, getTechnicalApplications);
 router.put('/applications/:id', authMiddleware, roleMiddleware('admin'), nonTechnicalUpdateValidation, updateNonTechnicalApplication);
+router.post('/applications', authMiddleware, roleMiddleware('admin'), uploadMiddleware, createApplicationValidation, createApplicationForApplicant);
 router.get('/users', authMiddleware, roleMiddleware('admin'), queryValidation, getUsers);
 router.put('/users/:id/role', authMiddleware, roleMiddleware('admin'), userRoleValidation, updateUserRole);
 

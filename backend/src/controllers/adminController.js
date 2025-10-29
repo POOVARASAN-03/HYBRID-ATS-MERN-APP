@@ -2,6 +2,7 @@ import { validationResult } from 'express-validator';
 import Application from '../models/Application.js';
 import JobPosting from '../models/JobPosting.js';
 import User from '../models/User.js';
+import { parseResume, calculateMatchScore, extractSkills } from '../utils/resumeParser.js';
 
 // Get admin dashboard statistics
 const getDashboardStats = async (req, res) => {
@@ -253,11 +254,158 @@ const updateUserRole = async (req, res) => {
   }
 };
 
+// Create application for applicant (Admin only)
+const createApplicationForApplicant = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { jobId, applicantId, skills } = req.body;
+
+    // Normalize skills input (array, JSON string or CSV string) into array
+    let providedSkills = [];
+    if (Array.isArray(skills)) {
+      providedSkills = skills.map(s => String(s).trim()).filter(Boolean);
+    } else if (typeof skills === 'string') {
+      try {
+        const parsed = JSON.parse(skills);
+        if (Array.isArray(parsed)) {
+          providedSkills = parsed.map(s => String(s).trim()).filter(Boolean);
+        } else {
+          providedSkills = skills.replace(/[\[\]"]+/g, '').split(',').map(s => s.trim()).filter(Boolean);
+        }
+      } catch (err) {
+        providedSkills = skills.replace(/[\[\]"]+/g, '').split(',').map(s => s.trim()).filter(Boolean);
+      }
+    }
+
+    // Check if job exists
+    const job = await JobPosting.findById(jobId);
+    if (!job) {
+      return res.status(404).json({
+        success: false,
+        message: 'Job posting not found'
+      });
+    }
+
+    // Check if applicant exists
+    const applicant = await User.findById(applicantId);
+    if (!applicant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Applicant not found'
+      });
+    }
+
+    // Check if user already applied to this job
+    const existingApplication = await Application.findOne({
+      jobId,
+      applicantId
+    });
+
+    if (existingApplication) {
+      return res.status(400).json({
+        success: false,
+        message: 'Applicant has already applied to this job'
+      });
+    }
+
+    // Determine role type based on job
+    const roleType = job.isTechnical ? 'technical' : 'non-technical';
+
+    let resumeData = {};
+    let extractedText = '';
+    let matchScore = 0;
+    let extractedSkills = [];
+
+    // Process resume if uploaded
+    if (req.file) {
+      try {
+        // Parse resume
+        extractedText = await parseResume(req.file.path);
+        
+        // Extract skills from resume
+        extractedSkills = extractSkills(extractedText);
+        
+        // Calculate match score with job skills (prefer requiredSkills; fallback to requiredKeywords)
+        const jobSkills = Array.isArray(job.requiredSkills) && job.requiredSkills.length > 0
+          ? job.requiredSkills
+          : (job.requiredKeywords || []);
+        matchScore = calculateMatchScore(extractedText, jobSkills);
+        
+        // Store resume file info
+        resumeData = {
+          filename: req.file.filename,
+          originalName: req.file.originalname,
+          path: req.file.path,
+          size: req.file.size
+        };
+      } catch (error) {
+        console.error('Resume parsing error:', error);
+        // Continue without resume data if parsing fails
+      }
+    }
+
+  // Combine provided skills with extracted skills
+  const allSkills = [...new Set([...(providedSkills || []), ...extractedSkills])];
+
+    // Create application (store skills as comma-separated string)
+    const application = new Application({
+      jobId,
+      jobTitle: job.title,
+      applicantId,
+      roleType,
+      resume: resumeData,
+      skills: allSkills.length > 0 ? allSkills.join(', ') : '',
+      matchScore,
+      extractedText,
+      comments: [{
+        text: 'Application created by admin',
+        by: req.user.name,
+        role: req.user.role
+      }],
+      history: [{
+        prevStatus: 'N/A',
+        newStatus: 'Applied',
+        updatedBy: req.user.name,
+        source: 'manual',
+        note: `Application created by admin for ${applicant.name}`,
+        timestamp: new Date()
+      }]
+    });
+
+    await application.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Application created successfully',
+      data: { 
+        application,
+        matchScore,
+        extractedSkills: extractedSkills.length > 0 ? extractedSkills : undefined
+      }
+    });
+  } catch (error) {
+    console.error('Create application for applicant error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while creating application'
+    });
+  }
+};
+
 export {
   getDashboardStats,
   getNonTechnicalApplications,
   getTechnicalApplications,
   updateNonTechnicalApplication,
   getUsers,
-  updateUserRole
+  updateUserRole,
+  createApplicationForApplicant
 };

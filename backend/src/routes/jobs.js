@@ -19,7 +19,19 @@ const jobValidation = [
   body('isTechnical')
     .optional()
     .isBoolean()
-    .withMessage('isTechnical must be a boolean value')
+    .withMessage('isTechnical must be a boolean value'),
+  body('requiredKeywords')
+    .optional()
+    .isArray()
+    .withMessage('Required keywords must be an array'),
+  body('keyRequirements')
+    .optional()
+    .isArray()
+    .withMessage('Key requirements must be an array'),
+  body('requiredSkills')
+    .optional()
+    .isArray()
+    .withMessage('Required skills must be an array')
 ];
 
 const updateJobValidation = [
@@ -40,7 +52,19 @@ const updateJobValidation = [
   body('status')
     .optional()
     .isIn(['active', 'inactive', 'closed'])
-    .withMessage('Status must be active, inactive, or closed')
+    .withMessage('Status must be active, inactive, or closed'),
+  body('requiredKeywords')
+    .optional()
+    .isArray()
+    .withMessage('Required keywords must be an array'),
+  body('keyRequirements')
+    .optional()
+    .isArray()
+    .withMessage('Key requirements must be an array'),
+  body('requiredSkills')
+    .optional()
+    .isArray()
+    .withMessage('Required skills must be an array')
 ];
 
 const queryValidation = [

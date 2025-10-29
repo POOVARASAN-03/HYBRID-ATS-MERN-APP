@@ -1,5 +1,6 @@
 import Application from '../models/Application.js';
 import JobPosting from '../models/JobPosting.js';
+import { calculateMatchScore } from '../utils/resumeParser.js';
 
 // Run bot automation (deterministic rules for technical applications)
 const runBot = async (req, res) => {
@@ -16,8 +17,12 @@ const runBot = async (req, res) => {
     const changed = [];
 
     for (const app of applications) {
-      // Double-check that the job is technical
-      if (!app.jobId.isTechnical) {
+      // Ensure job is populated and technical
+      if (!app.jobId || app.jobId == null) {
+        console.log(`⚠️ Skipping application ${app._id} - job not found or not populated`);
+        continue;
+      }
+      if (app.jobId.isTechnical !== true) {
         console.log(`⚠️ Skipping application ${app._id} - job is not technical`);
         continue;
       }
@@ -26,26 +31,41 @@ const runBot = async (req, res) => {
       let newStatus = prevStatus;
       let note = '';
 
-      // Deterministic progression rules
+      // Deterministic progression rules with resume matching
       switch (prevStatus) {
         case 'Applied':
-          newStatus = 'Reviewed';
-          note = 'Bot: Application reviewed and moved to next stage';
+          // More lenient: move most candidates to Reviewed, only reject extremely low
+          if (typeof app.matchScore !== 'number') app.matchScore = 0;
+          if (app.matchScore >= 50) {
+            newStatus = 'Reviewed';
+          } else if (app.matchScore >= 25) {
+            newStatus = 'Reviewed';
+          } else if (app.matchScore >= 10) {
+            newStatus = 'Reviewed';
+          } else {
+            newStatus = 'Rejected';
+          }
           break;
         
         case 'Reviewed':
-          newStatus = 'Interview';
-          note = 'Bot: Application approved for interview';
+          // More inclusive: interview when matchScore >= 25; else reject
+          if (typeof app.matchScore !== 'number') app.matchScore = 0;
+          if (app.matchScore >= 25) {
+            newStatus = 'Interview';
+          } else {
+            newStatus = 'Rejected';
+          }
           break;
         
         case 'Interview':
-          // Deterministic decision based on application ID for consistency
-          const decisionSeed = app._id.toString().charCodeAt(app._id.toString().length - 1);
-          const shouldOffer = decisionSeed % 3 !== 0; // 66% chance of offer
+          // Deterministic with lenient bias: give a +20 cushion to threshold (capped 90)
+          const rawSeedChar = app._id.toString().charCodeAt(app._id.toString().length - 1);
+          const seed = Math.abs(rawSeedChar) % 100;
+          const baseScore = typeof app.matchScore === 'number' ? Math.max(0, Math.min(100, Math.round(app.matchScore))) : 0;
+          const threshold = Math.min(90, baseScore + 20); // extra chance to get offers
+          const shouldOffer = seed < threshold;
           newStatus = shouldOffer ? 'Offer' : 'Rejected';
-          note = shouldOffer 
-            ? 'Bot: Interview successful, extending offer'
-            : 'Bot: Interview did not meet requirements';
+          // note will be set generically below
           break;
         
         default:
@@ -54,6 +74,8 @@ const runBot = async (req, res) => {
       }
 
       if (newStatus !== prevStatus) {
+        // Set generic note without exposing resume match
+        note = `Bot: Status changed from ${prevStatus} to ${newStatus}`;
         // Update status
         app.status = newStatus;
 
