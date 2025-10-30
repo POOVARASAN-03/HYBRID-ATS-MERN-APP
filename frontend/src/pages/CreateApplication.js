@@ -94,7 +94,7 @@ const CreateApplication = () => {
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create application');
-      toast.error(error, {
+      toast.error("Resume and Skills are Required!", {
         duration: 3000,
         position: 'top-right',
       });
