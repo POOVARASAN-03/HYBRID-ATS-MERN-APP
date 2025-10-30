@@ -18,16 +18,32 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
-    
-    if (token && userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch (error) {
-        console.error('Error parsing user data:', error);
+    const loginTime = localStorage.getItem('loginTime');
+
+    // ✅ Session expiry: 24hrs
+    const sessionDuration = 24 * 60 * 60 * 1000; // 24 hours
+
+    if (token && userData && loginTime) {
+      const isExpired = Date.now() - Number(loginTime) > sessionDuration;
+
+      if (isExpired) {
+        // ❌ session expired — clear everything
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('loginTime');
+        setUser(null);
+      } else {
+        try {
+          setUser(JSON.parse(userData));
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          localStorage.removeItem('loginTime');
+        }
       }
     }
+
     setLoading(false);
   }, []);
 
@@ -42,6 +58,10 @@ export const AuthProvider = ({ children }) => {
       
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(userData));
+
+      // ✅ Save login time
+      localStorage.setItem('loginTime', Date.now());
+
       setUser(userData);
       
       return { success: true, user: userData };
@@ -66,6 +86,10 @@ export const AuthProvider = ({ children }) => {
       
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(userData));
+
+      // ✅ Save login time
+      localStorage.setItem('loginTime', Date.now());
+
       setUser(userData);
       
       return { success: true, user: userData };
@@ -80,6 +104,10 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+
+    // ✅ clear login time too
+    localStorage.removeItem('loginTime');
+
     setUser(null);
   };
 

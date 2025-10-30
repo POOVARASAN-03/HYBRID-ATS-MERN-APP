@@ -80,7 +80,7 @@ const ApplicationSchema = new mongoose.Schema({
   resume: {
     content: {
       type: Buffer, // Store the file content as binary data
-      required: false
+      required: true
     },
     originalName: {
       type: String,
@@ -99,7 +99,8 @@ const ApplicationSchema = new mongoose.Schema({
   skills: {
     type: String,
     trim: true,
-    default: ''
+    default: '',
+    required: true
   },
   matchScore: {
     type: Number,

@@ -3,3 +3,6 @@ env.example
 node_modules/
 
 nginx.conf
+
+API_DOCUMENTATION.md
+Hybrid_ATS_API.postman_collection.json
